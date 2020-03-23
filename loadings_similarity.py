@@ -38,7 +38,7 @@ def threshold_adaptive(components_importance_measure: str, combine=True):
 
 def loadings_similarity(
     pipeline: Pipeline, data, limit_to_n_components=Inf, cv=KFold(), expectation_correction=False,
-    distance_correction=False,
+    distance_correction=False, show_progress=False,
     threshold=0.5, threshold_modifier=None
 ):
     result = []
@@ -50,7 +50,12 @@ def loadings_similarity(
     if not threshold_modifier:
         threshold_modifier = threshold_as_is
 
-    for train, test in tqdm(cv.split(data), total=cv.get_n_splits()):
+    splits = cv.split(data)
+
+    if show_progress:
+        splits = tqdm(splits, total=cv.get_n_splits())
+
+    for train, test in splits:
 
         train = data[train]
         test = data[test]
